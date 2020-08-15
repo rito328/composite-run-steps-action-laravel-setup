@@ -1,21 +1,18 @@
-name: 'Hello World'
-description: 'Greet someone'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
+  name: 
+    description: 'Setup Laravel'
 runs:
   using: "composite"
-  steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
+  steps: 
+    - name: Copy .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
       shell: bash
-    - id: random-number-generator
-      run: echo "::set-output name=random-id::$(echo $RANDOM)"
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       shell: bash
-    - run: ${{ github.action_path }}/goodbye.sh
+    - name: Generate key
+      run: php artisan key:generate
+      shell: bash
+    - name: Directory Permissions
+      run: chmod -R 777 storage bootstrap/cache
       shell: bash
