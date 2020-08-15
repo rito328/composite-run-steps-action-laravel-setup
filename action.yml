@@ -6,9 +6,13 @@ runs:
   steps: 
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      shell: bash
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      shell: bash
     - name: Generate key
       run: php artisan key:generate
+      shell: bash
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
+      shell: bash
